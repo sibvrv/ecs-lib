@@ -571,6 +571,13 @@ export default class ECS {
     }
 
     /**
+     * Get all entities
+     */
+    public getEntities(): Entity[] {
+        return this.entities;
+    }
+
+    /**
      * Get an entity by id
      *
      * @param id
