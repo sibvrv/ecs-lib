@@ -222,7 +222,7 @@ export abstract class Entity {
 /**
  * Force typing
  */
-export type ComponentClassType<P> = (new (data: P) => Component<P>) & {
+export type ComponentClassType<P, S> = (new (data: P) => Component<P, S>) & {
 
     /**
      * Static reference to type id
@@ -234,28 +234,28 @@ export type ComponentClassType<P> = (new (data: P) => Component<P>) & {
      *
      * @param entity
      */
-    allFrom(entity: Entity): Component<P>[];
+    allFrom(entity: Entity): Component<P, S>[];
 
     /**
      * Get one instance of this component from entity
      *
      * @param entity
      */
-    oneFrom(entity: Entity): Component<P>;
+    oneFrom(entity: Entity): Component<P, S>;
 }
 
 /**
  * Representation of a component in ECS
  */
-export abstract class Component<T> {
+export abstract class Component<T, S = Record<string, any>> {
 
     /**
      * Register a new component class
      */
-    public static register<P>(): ComponentClassType<P> {
+    public static register<P, S = Record<string, any>>(): ComponentClassType<P, S> {
         const typeID = SEQ_COMPONENT++;
 
-        class ComponentImpl extends Component<P> {
+        class ComponentImpl extends Component<P, S> {
 
             static type = typeID;
 
@@ -281,7 +281,7 @@ export abstract class Component<T> {
             }
         }
 
-        return (ComponentImpl as any) as ComponentClassType<P>;
+        return (ComponentImpl as any) as ComponentClassType<P, S>;
     }
 
     public type: number;
@@ -292,9 +292,7 @@ export abstract class Component<T> {
      * A component can have attributes. Attributes are secondary values used to save miscellaneous data required by some
      * specialized systems.
      */
-    public attr: {
-        [key: string]: any
-    } = {};
+    public attr: Partial<S> = {};
 
     constructor(type: number, data: T) {
         this.type = type;

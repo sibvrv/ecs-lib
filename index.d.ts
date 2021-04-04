@@ -72,7 +72,7 @@ export declare abstract class Entity {
 /**
  * Force typing
  */
-export declare type ComponentClassType<P> = (new (data: P) => Component<P>) & {
+export declare type ComponentClassType<P, S> = (new (data: P) => Component<P, S>) & {
     /**
      * Static reference to type id
      */
@@ -82,31 +82,29 @@ export declare type ComponentClassType<P> = (new (data: P) => Component<P>) & {
      *
      * @param entity
      */
-    allFrom(entity: Entity): Component<P>[];
+    allFrom(entity: Entity): Component<P, S>[];
     /**
      * Get one instance of this component from entity
      *
      * @param entity
      */
-    oneFrom(entity: Entity): Component<P>;
+    oneFrom(entity: Entity): Component<P, S>;
 };
 /**
  * Representation of a component in ECS
  */
-export declare abstract class Component<T> {
+export declare abstract class Component<T, S = Record<string, any>> {
     /**
      * Register a new component class
      */
-    static register<P>(): ComponentClassType<P>;
+    static register<P, S = Record<string, any>>(): ComponentClassType<P, S>;
     type: number;
     data: T;
     /**
      * A component can have attributes. Attributes are secondary values used to save miscellaneous data required by some
      * specialized systems.
      */
-    attr: {
-        [key: string]: any;
-    };
+    attr: Partial<S>;
     constructor(type: number, data: T);
 }
 /**
